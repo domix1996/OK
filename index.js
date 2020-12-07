@@ -25,6 +25,11 @@ rl.question('Czy program ma wygenerować własne liczby? T/N ', (answer) => {
                 rl.question(`Podaj ${size} liczb, odzielając każdą przecinkiem: `, (numbers) => {
                     const setOfNumbers = numbers.split(',').map((x) => parseInt(x));
 
+                    if (setOfNumbers.length > size) {
+                        console.log('Zbiór przekroczył określoną wartość');
+                        rl.close();
+                    }
+
                     if (setOfNumbers.length > 200) {
                         console.log('Przekroczyłeś maksymalny dozwolony zbiór');
                         rl.close();
@@ -49,36 +54,44 @@ const countMaximumPoints = (numbers) => {
     if(numbers.length < 3) return maximumPoints;
 
     while(numbers.length > 2) {
-        let result = findBiggestPair(numbers);
-        maximumPoints += numbers.filter((x, i) => i+1 === result.idx || i === result.idx || i-1 === result.idx ).reduce((a,b) => a + b, 0);
-        numbers.splice(result.idx, 1)
+        let result = findBestIndex(numbers);
+        maximumPoints += numbers.filter((x, i) => i+1 === result || i === result || i-1 === result )
+          .reduce((a,b) => a + b, 0);
+        numbers.splice(result, 1)
     }
 
     return maximumPoints;
 }
 
-const findBiggestPair = (numbers) => {
-    let firstSum = 0;
-    let secondSum = 0;
+const findBestIndex = (numbers) => {
     let biggestSum = 0;
-    let idx = 0;
+    let idx = null;
+    const pointGroups = [];
 
     if (numbers.length === 3) {
-        return { sum: numbers.reduce((a, b) => a + b, 0) , idx: 1}
+        return 1
     }
 
-    for (let i = 0; i < numbers.length-3; i++){
-        firstSum = numbers[i] + numbers[i+1] + numbers[i+2] + numbers[i] + numbers[i+2] + numbers[i+3];
-        secondSum = numbers[i+1] + numbers[i+2] + numbers[i+3] + numbers[i] + numbers[i+1] + numbers[i+3];
+    for (let i = 0; i <= (numbers.length + 1)-4; i++) {
+        pointGroups.push([
+            numbers[i], numbers[i+1], numbers[i+2], numbers[i+3]
+        ])
+    }
+
+    pointGroups.forEach((n, i) => {
+        const firstSum = n[0] + n[1] + n[2] + n[0] + n[2] + n[3];
+        const secondSum = n[1] + n[2] + n[3] + n[0] + n[1] + n[3];
 
         if(firstSum > biggestSum){
             biggestSum = firstSum;
             idx = i + 1
-        } else if(secondSum > biggestSum) {
+        }
+
+        if(secondSum > biggestSum) {
             biggestSum = secondSum;
             idx = i + 2;
         }
-    }
+    })
 
-    return { idx };
+    return idx;
 }
