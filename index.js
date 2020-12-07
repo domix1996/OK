@@ -50,8 +50,8 @@ const countMaximumPoints = (numbers) => {
 
     while(numbers.length > 2) {
         let result = findBiggestPair(numbers);
+        maximumPoints += numbers.filter((x, i) => i+1 === result.idx || i === result.idx || i-1 === result.idx ).reduce((a,b) => a + b, 0);
         numbers.splice(result.idx, 1)
-        maximumPoints += result.sum;
     }
 
     return maximumPoints;
@@ -60,7 +60,7 @@ const countMaximumPoints = (numbers) => {
 const findBiggestPair = (numbers) => {
     let firstSum = 0;
     let secondSum = 0;
-    let sum = 0
+    let biggestSum = 0;
     let idx = 0;
 
     if (numbers.length === 3) {
@@ -71,14 +71,14 @@ const findBiggestPair = (numbers) => {
         firstSum = numbers[i] + numbers[i+1] + numbers[i+2] + numbers[i] + numbers[i+2] + numbers[i+3];
         secondSum = numbers[i+1] + numbers[i+2] + numbers[i+3] + numbers[i] + numbers[i+1] + numbers[i+3];
 
-        if(firstSum > secondSum){
-            sum = numbers[i] + numbers[i+1] + numbers[i+2];
+        if(firstSum > biggestSum){
+            biggestSum = firstSum;
             idx = i + 1
-        } else {
-            sum = numbers[i+1] + numbers[i+2] + numbers[i+3];
+        } else if(secondSum > biggestSum) {
+            biggestSum = secondSum;
             idx = i + 2;
         }
     }
 
-    return { sum, idx };
+    return { idx };
 }
