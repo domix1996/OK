@@ -1,0 +1,10 @@
+{
+  "name": "z4",
+  "version": "1.0.0",
+  "description": "Informacje dotyczące uruchomienia w pliku README.md",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js"
+  }
+}
